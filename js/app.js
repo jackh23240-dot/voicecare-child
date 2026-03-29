@@ -1,15 +1,17 @@
 // HomeVoice English - 子女端应用主逻辑
-// 包含完整的录音、存储、分享功能
+// 包含词库、录音、分享功能
 
-// 单词卡片数据 - 5 个场景，每个场景 3 个单词
-const wordData = {
+// 完整词库 - 10 个场景，每个场景 5 个单词
+const wordLibrary = {
     customs: {
         name: '过海关',
         icon: '🛃',
         words: [
             { id: 'c1', word: 'Passport', phonetic: '/ˈpæspɔːrt/', meaning: '护照', example: 'May I see your passport?', exampleCn: '请出示您的护照好吗？', aiScript: '妈，今天教你"Passport"，就是护照的意思。过海关的时候一定要带好哦！' },
             { id: 'c2', word: 'Customs', phonetic: '/ˈkʌstəmz/', meaning: '海关', example: 'We need to go through customs.', exampleCn: '我们需要通过海关检查。', aiScript: 'Customs 就是海关，检查行李的地方。记得要申报带的东西！' },
-            { id: 'c3', word: 'Visa', phonetic: '/ˈviːzə/', meaning: '签证', example: 'Do I need a visa?', exampleCn: '我需要签证吗？', aiScript: 'Visa 是签证，去国外要提前办好。你的是旅游签证！' }
+            { id: 'c3', word: 'Visa', phonetic: '/ˈviːzə/', meaning: '签证', example: 'Do I need a visa?', exampleCn: '我需要签证吗？', aiScript: 'Visa 是签证，去国外要提前办好。你的是旅游签证！' },
+            { id: 'c4', word: 'Declaration', phonetic: '/ˌdekləˈreɪʃn/', meaning: '申报', example: 'Do you have anything to declare?', exampleCn: '你有什么要申报的吗？', aiScript: 'Declaration 是申报，过海关时会问你有没有东西要申报！' },
+            { id: 'c5', word: 'Luggage', phonetic: '/ˈlʌɡɪdʒ/', meaning: '行李', example: 'This is all my luggage.', exampleCn: '这是我所有的行李。', aiScript: 'Luggage 就是行李，你带的箱子包包都是 luggage！' }
         ]
     },
     shopping: {
@@ -18,7 +20,9 @@ const wordData = {
         words: [
             { id: 's1', word: 'Vegetable', phonetic: '/ˈvedʒtəbl/', meaning: '蔬菜', example: 'I buy fresh vegetables every day.', exampleCn: '我每天买新鲜蔬菜。', aiScript: '妈，Vegetable 就是蔬菜，你每天买的那些青菜都是 vegetables！' },
             { id: 's2', word: 'Price', phonetic: '/praɪs/', meaning: '价格', example: 'What\'s the price?', exampleCn: '多少钱？', aiScript: 'Price 是价格，买菜的时候问"What\'s the price"就是问多少钱！' },
-            { id: 's3', word: 'Discount', phonetic: '/ˈdɪskaʊnt/', meaning: '折扣', example: 'Is there a discount?', exampleCn: '有折扣吗？', aiScript: 'Discount 是折扣，看到打折的商品就可以问"Is there a discount"！' }
+            { id: 's3', word: 'Discount', phonetic: '/ˈdɪskaʊnt/', meaning: '折扣', example: 'Is there a discount?', exampleCn: '有折扣吗？', aiScript: 'Discount 是折扣，看到打折的商品就可以问"Is there a discount"！' },
+            { id: 's4', word: 'Fresh', phonetic: '/freʃ/', meaning: '新鲜的', example: 'The vegetables are very fresh.', exampleCn: '这些蔬菜很新鲜。', aiScript: 'Fresh 是新鲜的意思，买菜要说"fresh vegetables"！' },
+            { id: 's5', word: 'Cashier', phonetic: '/kæˈʃɪr/', meaning: '收银台', example: 'Where is the cashier?', exampleCn: '收银台在哪里？', aiScript: 'Cashier 是收银台，结账的时候找 cashier！' }
         ]
     },
     restaurant: {
@@ -27,7 +31,9 @@ const wordData = {
         words: [
             { id: 'r1', word: 'Menu', phonetic: '/ˈmenju/', meaning: '菜单', example: 'Can I see the menu?', exampleCn: '能给我看看菜单吗？', aiScript: 'Menu 就是菜单，进餐厅第一件事就是"Can I see the menu"！' },
             { id: 'r2', word: 'Order', phonetic: '/ˈɔːrdər/', meaning: '点餐', example: 'I\'d like to order now.', exampleCn: '我现在想点餐。', aiScript: 'Order 是点餐，准备好点菜就说"I\'d like to order"！' },
-            { id: 'r3', word: 'Delicious', phonetic: '/dɪˈlɪʃəs/', meaning: '美味的', example: 'This is delicious!', exampleCn: '这个很好吃！', aiScript: 'Delicious 是好吃的意思，吃到好吃的菜可以说"This is delicious"！' }
+            { id: 'r3', word: 'Delicious', phonetic: '/dɪˈlɪʃəs/', meaning: '美味的', example: 'This is delicious!', exampleCn: '这个很好吃！', aiScript: 'Delicious 是好吃的意思，吃到好吃的菜可以说"This is delicious"！' },
+            { id: 'r4', word: 'Bill', phonetic: '/bɪl/', meaning: '账单', example: 'Can I have the bill?', exampleCn: '能给我账单吗？', aiScript: 'Bill 是账单，吃完饭要结账就说"Can I have the bill"！' },
+            { id: 'r5', word: 'Water', phonetic: '/ˈwɔːtər/', meaning: '水', example: 'A glass of water, please.', exampleCn: '请给我一杯水。', aiScript: 'Water 就是水，要喝水就说"water"！' }
         ]
     },
     travel: {
@@ -36,7 +42,9 @@ const wordData = {
         words: [
             { id: 't1', word: 'Station', phonetic: '/ˈsteɪʃn/', meaning: '车站', example: 'Where is the station?', exampleCn: '车站在哪里？', aiScript: 'Station 是车站，找车站就问"Where is the station"！' },
             { id: 't2', word: 'Ticket', phonetic: '/ˈtɪkɪt/', meaning: '票', example: 'I need a ticket.', exampleCn: '我需要一张票。', aiScript: 'Ticket 就是票，买票的时候说"I need a ticket"！' },
-            { id: 't3', word: 'Direction', phonetic: '/daɪˈrekʃn/', meaning: '方向', example: 'Can you show me the direction?', exampleCn: '能告诉我方向吗？', aiScript: 'Direction 是方向，迷路了可以问"Can you show me the direction"！' }
+            { id: 't3', word: 'Direction', phonetic: '/daɪˈrekʃn/', meaning: '方向', example: 'Can you show me the direction?', exampleCn: '能告诉我方向吗？', aiScript: 'Direction 是方向，迷路了可以问"Can you show me the direction"！' },
+            { id: 't4', word: 'Map', phonetic: '/mæp/', meaning: '地图', example: 'Do you have a map?', exampleCn: '你有地图吗？', aiScript: 'Map 是地图，找路的时候可以看 map！' },
+            { id: 't5', word: 'Taxi', phonetic: '/ˈtæksi/', meaning: '出租车', example: 'I need a taxi.', exampleCn: '我需要一辆出租车。', aiScript: 'Taxi 是出租车，打车就说"I need a taxi"！' }
         ]
     },
     health: {
@@ -45,7 +53,64 @@ const wordData = {
         words: [
             { id: 'h1', word: 'Doctor', phonetic: '/ˈdɑːktər/', meaning: '医生', example: 'I need to see a doctor.', exampleCn: '我需要看医生。', aiScript: 'Doctor 是医生，不舒服就说"I need to see a doctor"！' },
             { id: 'h2', word: 'Medicine', phonetic: '/ˈmedsn/', meaning: '药', example: 'Take this medicine.', exampleCn: '吃这个药。', aiScript: 'Medicine 是药，医生开的药就是 medicine！' },
-            { id: 'h3', word: 'Hospital', phonetic: '/ˈhɑːspɪtl/', meaning: '医院', example: 'Where is the hospital?', exampleCn: '医院在哪里？', aiScript: 'Hospital 是医院，找医院就问"Where is the hospital"！' }
+            { id: 'h3', word: 'Hospital', phonetic: '/ˈhɑːspɪtl/', meaning: '医院', example: 'Where is the hospital?', exampleCn: '医院在哪里？', aiScript: 'Hospital 是医院，找医院就问"Where is the hospital"！' },
+            { id: 'h4', word: 'Fever', phonetic: '/ˈfiːvər/', meaning: '发烧', example: 'I have a fever.', exampleCn: '我发烧了。', aiScript: 'Fever 是发烧，不舒服可以说"I have a fever"！' },
+            { id: 'h5', word: 'Pharmacy', phonetic: '/ˈfɑːrməsi/', meaning: '药店', example: 'Where is the pharmacy?', exampleCn: '药店在哪里？', aiScript: 'Pharmacy 是药店，买药就去 pharmacy！' }
+        ]
+    },
+    greeting: {
+        name: '日常问候',
+        icon: '👋',
+        words: [
+            { id: 'g1', word: 'Hello', phonetic: '/həˈloʊ/', meaning: '你好', example: 'Hello, how are you?', exampleCn: '你好，你好吗？', aiScript: 'Hello 是最常用的问候，见到人都可以说！' },
+            { id: 'g2', word: 'Thank you', phonetic: '/ˈθæŋk juː/', meaning: '谢谢', example: 'Thank you very much.', exampleCn: '非常感谢。', aiScript: 'Thank you 是谢谢，得到帮助要说哦！' },
+            { id: 'g3', word: 'Sorry', phonetic: '/ˈsɔːri/', meaning: '对不起', example: 'I\'m sorry.', exampleCn: '对不起。', aiScript: 'Sorry 是对不起，不小心冒犯别人要说！' },
+            { id: 'g4', word: 'Goodbye', phonetic: '/ˌɡʊdˈbaɪ/', meaning: '再见', example: 'Goodbye, see you later.', exampleCn: '再见，回头见。', aiScript: 'Goodbye 是再见，分别的时候说！' },
+            { id: 'g5', word: 'Please', phonetic: '/pliːz/', meaning: '请', example: 'Please help me.', exampleCn: '请帮帮我。', aiScript: 'Please 是请，请求帮助要说 please！' }
+        ]
+    },
+    numbers: {
+        name: '数字时间',
+        icon: '🔢',
+        words: [
+            { id: 'n1', word: 'One', phonetic: '/wʌn/', meaning: '一', example: 'One apple, please.', exampleCn: '请给我一个苹果。', aiScript: 'One 是一，数数从一开始！' },
+            { id: 'n2', word: 'Two', phonetic: '/tuː/', meaning: '二', example: 'Two tickets, please.', exampleCn: '请给我两张票。', aiScript: 'Two 是二，两个东西就说 two！' },
+            { id: 'n3', word: 'Time', phonetic: '/taɪm/', meaning: '时间', example: 'What time is it?', exampleCn: '现在几点了？', aiScript: 'Time 是时间，问时间就说"What time"！' },
+            { id: 'n4', word: 'Today', phonetic: '/təˈdeɪ/', meaning: '今天', example: 'Today is Monday.', exampleCn: '今天是星期一。', aiScript: 'Today 是今天，每天都是新的开始！' },
+            { id: 'n5', word: 'Tomorrow', phonetic: '/təˈmɔːroʊ/', meaning: '明天', example: 'See you tomorrow.', exampleCn: '明天见。', aiScript: 'Tomorrow 是明天，约好明天见就说这个！' }
+        ]
+    },
+    family: {
+        name: '家庭成员',
+        icon: '👨‍👩‍👧',
+        words: [
+            { id: 'f1', word: 'Family', phonetic: '/ˈfæməli/', meaning: '家庭', example: 'I love my family.', exampleCn: '我爱我的家人。', aiScript: 'Family 是家庭，一家人就是 family！' },
+            { id: 'f2', word: 'Mother', phonetic: '/ˈmʌðər/', meaning: '母亲', example: 'This is my mother.', exampleCn: '这是我的母亲。', aiScript: 'Mother 是母亲，妈妈就是 mother！' },
+            { id: 'f3', word: 'Father', phonetic: '/ˈfɑːðər/', meaning: '父亲', example: 'This is my father.', exampleCn: '这是我的父亲。', aiScript: 'Father 是父亲，爸爸就是 father！' },
+            { id: 'f4', word: 'Son', phonetic: '/sʌn/', meaning: '儿子', example: 'He is my son.', exampleCn: '他是我的儿子。', aiScript: 'Son 是儿子，你的孩子就是 son！' },
+            { id: 'f5', word: 'Daughter', phonetic: '/ˈdɔːtər/', meaning: '女儿', example: 'She is my daughter.', exampleCn: '她是我的女儿。', aiScript: 'Daughter 是女儿，你的孩子就是 daughter！' }
+        ]
+    },
+    weather: {
+        name: '天气',
+        icon: '🌤️',
+        words: [
+            { id: 'w1', word: 'Weather', phonetic: '/ˈweðər/', meaning: '天气', example: 'The weather is nice.', exampleCn: '天气很好。', aiScript: 'Weather 是天气，每天都可以聊聊 weather！' },
+            { id: 'w2', word: 'Sunny', phonetic: '/ˈsʌni/', meaning: '晴朗的', example: 'It\'s sunny today.', exampleCn: '今天晴朗。', aiScript: 'Sunny 是晴朗，出太阳就是 sunny！' },
+            { id: 'w3', word: 'Rain', phonetic: '/reɪn/', meaning: '雨', example: 'It\'s raining.', exampleCn: '下雨了。', aiScript: 'Rain 是雨，下雨天就说 rain！' },
+            { id: 'w4', word: 'Cold', phonetic: '/koʊld/', meaning: '冷的', example: 'It\'s cold today.', exampleCn: '今天很冷。', aiScript: 'Cold 是冷的，天气冷就说 cold！' },
+            { id: 'w5', word: 'Warm', phonetic: '/wɔːrm/', meaning: '温暖的', example: 'It\'s warm today.', exampleCn: '今天很温暖。', aiScript: 'Warm 是温暖的，舒服的天气就是 warm！' }
+        ]
+    },
+    colors: {
+        name: '颜色',
+        icon: '🎨',
+        words: [
+            { id: 'col1', word: 'Red', phonetic: '/red/', meaning: '红色', example: 'This is red.', exampleCn: '这是红色。', aiScript: 'Red 是红色，像苹果一样的颜色！' },
+            { id: 'col2', word: 'Blue', phonetic: '/bluː/', meaning: '蓝色', example: 'The sky is blue.', exampleCn: '天空是蓝色的。', aiScript: 'Blue 是蓝色，像天空一样的颜色！' },
+            { id: 'col3', word: 'Green', phonetic: '/ɡriːn/', meaning: '绿色', example: 'The grass is green.', exampleCn: '草地是绿色的。', aiScript: 'Green 是绿色，像小草一样的颜色！' },
+            { id: 'col4', word: 'White', phonetic: '/waɪt/', meaning: '白色', example: 'The snow is white.', exampleCn: '雪是白色的。', aiScript: 'White 是白色，像雪花一样的颜色！' },
+            { id: 'col5', word: 'Black', phonetic: '/blæk/', meaning: '黑色', example: 'The cat is black.', exampleCn: '这只猫是黑色的。', aiScript: 'Black 是黑色，像夜晚一样的颜色！' }
         ]
     }
 };
@@ -55,13 +120,16 @@ let appState = {
     currentScene: 'customs',
     currentWordId: null,
     isRecording: false,
-    recordedWords: new Map(), // wordId -> { audioBlob, duration, timestamp }
+    selectedWords: new Set(), // 从词库选择的单词 ID
+    demoRecordings: new Map(), // 示范朗读的单词 ID -> { duration, timestamp }
+    userRecordings: new Map(), // 用户录制的单词 ID -> { audioBlob, duration, timestamp }
     mediaRecorder: null,
     audioContext: null,
     analyser: null,
     animationId: null,
     recordStartTime: 0,
-    recordTimerInterval: null
+    recordTimerInterval: null,
+    showLibrary: false
 };
 
 // IndexedDB 配置
@@ -91,7 +159,7 @@ function initSceneSelector() {
     const container = document.getElementById('scene-selector');
     container.innerHTML = '';
     
-    Object.entries(wordData).forEach(([key, scene]) => {
+    Object.entries(wordLibrary).forEach(([key, scene]) => {
         const btn = document.createElement('button');
         btn.className = `flex-shrink-0 px-4 py-2 rounded-full font-medium transition-all btn-active ${
             appState.currentScene === key 
@@ -114,11 +182,14 @@ function switchScene(sceneKey) {
 // 渲染单词卡片
 function renderCards() {
     const container = document.getElementById('cards-container');
-    const scene = wordData[appState.currentScene];
+    const scene = wordLibrary[appState.currentScene];
     container.innerHTML = '';
     
     scene.words.forEach((word, index) => {
-        const isRecorded = appState.recordedWords.has(word.id);
+        const hasDemo = appState.demoRecordings.has(word.id);
+        const hasUserRecording = appState.userRecordings.has(word.id);
+        const isSelected = appState.selectedWords.has(word.id);
+        
         const card = document.createElement('div');
         card.className = 'bg-white rounded-2xl p-5 shadow-sm border border-surface card-enter';
         card.style.animationDelay = `${index * 0.1}s`;
@@ -129,7 +200,7 @@ function renderCards() {
                     <p class="text-sm text-on-surface-muted">${word.phonetic}</p>
                 </div>
                 <div class="flex gap-2">
-                    <button onclick="playDemo('${word.word}')" class="w-10 h-10 bg-secondary/10 rounded-full flex items-center justify-center btn-active hover:bg-secondary/20" title="示范朗读">
+                    <button onclick="playDemo('${word.id}', '${word.word}')" class="w-10 h-10 bg-secondary/10 rounded-full flex items-center justify-center btn-active hover:bg-secondary/20" title="示范朗读">
                         <span class="material-symbols-rounded text-secondary text-xl">volume_up</span>
                     </button>
                     <button onclick="playTTS('${word.word}')" class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center btn-active hover:bg-primary/20" title="播放发音">
@@ -144,17 +215,37 @@ function renderCards() {
                 <p class="text-sm text-on-surface">${word.example}</p>
                 <p class="text-xs text-on-surface-muted mt-1">${word.exampleCn}</p>
             </div>
+            
+            <!-- 选择框 -->
+            <div class="flex items-center gap-2 mb-3 p-3 bg-primary/5 rounded-xl">
+                <input type="checkbox" id="select-${word.id}" ${isSelected ? 'checked' : ''} onchange="toggleWordSelection('${word.id}')" class="w-5 h-5 text-primary rounded focus:ring-primary">
+                <label for="select-${word.id}" class="text-sm text-on-surface cursor-pointer flex-1">选择此单词加入发送列表</label>
+            </div>
+            
             <div class="flex gap-2">
-                <button onclick="openRecordModal('${word.id}')" class="flex-1 h-12 ${isRecorded ? 'bg-primary' : 'bg-primary/10'} text-white rounded-xl font-medium btn-active transition-all flex items-center justify-center gap-2">
-                    <span class="material-symbols-rounded text-lg">${isRecorded ? 'check_circle' : 'mic'}</span>
-                    <span>${isRecorded ? '已录制' : '录制发音'}</span>
+                <button onclick="openRecordModal('${word.id}')" class="flex-1 h-12 ${hasUserRecording ? 'bg-primary' : 'bg-primary/10'} text-white rounded-xl font-medium btn-active transition-all flex items-center justify-center gap-2">
+                    <span class="material-symbols-rounded text-lg">${hasUserRecording ? 'check_circle' : 'mic'}</span>
+                    <span>${hasUserRecording ? '已录制' : '录制发音'}</span>
                 </button>
-                ${isRecorded ? `
+                ${hasUserRecording ? `
                     <button onclick="playRecording('${word.id}')" class="w-12 h-12 bg-secondary/10 rounded-xl flex items-center justify-center btn-active hover:bg-secondary/20">
                         <span class="material-symbols-rounded text-secondary text-2xl">play_circle</span>
                     </button>
                 ` : ''}
+                ${hasDemo ? `
+                    <button onclick="removeDemo('${word.id}')" class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center btn-active hover:bg-red-200">
+                        <span class="material-symbols-rounded text-red-600 text-2xl">delete</span>
+                    </button>
+                ` : ''}
             </div>
+            
+            <!-- 示范朗读状态 -->
+            ${hasDemo ? `
+                <div class="mt-3 flex items-center gap-2 p-2 bg-secondary/10 rounded-lg">
+                    <span class="material-symbols-rounded text-secondary text-sm">check_circle</span>
+                    <span class="text-xs text-secondary font-medium">已添加示范朗读</span>
+                </div>
+            ` : ''}
         `;
         container.appendChild(card);
     });
@@ -162,6 +253,37 @@ function renderCards() {
     // 更新 AI 提示
     const firstWord = scene.words[0];
     document.getElementById('ai-tip').textContent = firstWord.aiScript;
+}
+
+// 切换单词选择
+function toggleWordSelection(wordId) {
+    if (appState.selectedWords.has(wordId)) {
+        appState.selectedWords.delete(wordId);
+    } else {
+        appState.selectedWords.add(wordId);
+    }
+    updateSendButton();
+    showToast(appState.selectedWords.has(wordId) ? '已添加到发送列表' : '已从列表移除');
+}
+
+// 添加示范朗读
+function addDemoRecording(wordId) {
+    appState.demoRecordings.set(wordId, {
+        duration: 0,
+        timestamp: Date.now()
+    });
+    renderCards();
+    updateSendButton();
+    showToast('已添加示范朗读');
+}
+
+// 移除示范朗读
+function removeDemo(wordId) {
+    appState.demoRecordings.delete(wordId);
+    appState.selectedWords.delete(wordId);
+    renderCards();
+    updateSendButton();
+    showToast('已移除示范朗读');
 }
 
 // 初始化波形
@@ -178,7 +300,7 @@ function initWaveform() {
 
 // 打开录音模态框
 function openRecordModal(wordId) {
-    const scene = wordData[appState.currentScene];
+    const scene = wordLibrary[appState.currentScene];
     const word = scene.words.find(w => w.id === wordId);
     
     appState.currentWordId = wordId;
@@ -226,14 +348,14 @@ async function startRecording(event) {
             const duration = (Date.now() - appState.recordStartTime) / 1000;
             
             // 保存录音
-            appState.recordedWords.set(appState.currentWordId, {
+            appState.userRecordings.set(appState.currentWordId, {
                 audioBlob: audioBlob,
                 duration: duration,
                 timestamp: Date.now()
             });
             
             // 存储到 IndexedDB
-            await saveRecordingToDB(appState.currentWordId, audioBlob, duration);
+            await saveRecordingToDB(appState.currentWordId, audioBlob, duration, 'user');
             
             // 更新 UI
             renderCards();
@@ -353,8 +475,8 @@ function playTTS(text) {
     showToast('播放发音');
 }
 
-// 播放示范朗读（真人发音模拟 - 使用更高质量的 TTS）
-function playDemo(text) {
+// 播放/添加示范朗读
+function playDemo(wordId, word) {
     // 先播放提示音
     const context = new (window.AudioContext || window.webkitAudioContext)();
     const oscillator = context.createOscillator();
@@ -372,20 +494,25 @@ function playDemo(text) {
     
     // 然后播放单词
     setTimeout(() => {
-        const utterance = new SpeechSynthesisUtterance(text);
+        const utterance = new SpeechSynthesisUtterance(word);
         utterance.lang = 'en-US';
         utterance.rate = 0.7;
         utterance.pitch = 1.0;
         utterance.volume = 1.0;
         speechSynthesis.speak(utterance);
+        
+        // 添加到示范朗读列表
+        if (!appState.demoRecordings.has(wordId)) {
+            addDemoRecording(wordId);
+        }
     }, 150);
     
-    showToast('示范朗读');
+    showToast('示范朗读已添加');
 }
 
 // 播放录音
 async function playRecording(wordId) {
-    const recording = appState.recordedWords.get(wordId);
+    const recording = appState.userRecordings.get(wordId);
     if (!recording) return;
     
     const audioUrl = URL.createObjectURL(recording.audioBlob);
@@ -398,17 +525,20 @@ async function playRecording(wordId) {
 // 更新发送按钮
 function updateSendButton() {
     const btn = document.getElementById('send-btn');
-    const count = appState.recordedWords.size;
+    const selectedCount = appState.selectedWords.size;
+    const demoCount = appState.demoRecordings.size;
+    const userCount = appState.userRecordings.size;
+    const totalCount = selectedCount + demoCount + userCount;
     
-    document.getElementById('recorded-count').textContent = `已录制 ${count}/3 个单词`;
+    document.getElementById('recorded-count').textContent = `已选择 ${selectedCount + demoCount} 个单词`;
     
-    if (count > 0) {
+    if (totalCount > 0) {
         btn.disabled = false;
         btn.classList.remove('bg-gray-300');
         btn.classList.add('bg-gradient-to-r', 'from-primary', 'to-primary-dark');
         btn.innerHTML = `
             <span class="material-symbols-rounded text-2xl">send</span>
-            <span>发送声音包裹 (${count}个)</span>
+            <span>发送声音包裹 (${totalCount}个)</span>
         `;
     } else {
         btn.disabled = true;
@@ -416,7 +546,7 @@ function updateSendButton() {
         btn.classList.remove('bg-gradient-to-r', 'from-primary', 'to-primary-dark');
         btn.innerHTML = `
             <span class="material-symbols-rounded text-2xl">send</span>
-            <span>选择单词后录音</span>
+            <span>选择单词后发送</span>
         `;
     }
 }
@@ -427,26 +557,60 @@ function showSendPreview() {
     previewList.innerHTML = '';
     
     let count = 0;
-    appState.recordedWords.forEach((recording, wordId) => {
-        const scene = Object.values(wordData).find(s => s.words.some(w => w.id === wordId));
+    
+    // 添加选择的单词（示范朗读）
+    appState.selectedWords.forEach(wordId => {
+        if (!appState.demoRecordings.has(wordId)) {
+            addDemoRecording(wordId);
+        }
+    });
+    
+    // 显示示范朗读
+    appState.demoRecordings.forEach((recording, wordId) => {
+        const scene = Object.values(wordLibrary).find(s => s.words.some(w => w.id === wordId));
         const word = scene.words.find(w => w.id === wordId);
         
         const item = document.createElement('div');
         item.className = 'flex items-center gap-3 p-3 bg-surface rounded-xl';
         item.innerHTML = `
-            <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                <span class="material-symbols-rounded text-primary text-xl">mic</span>
+            <div class="w-10 h-10 bg-secondary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                <span class="material-symbols-rounded text-secondary text-xl">volume_up</span>
             </div>
             <div class="flex-1 min-w-0">
                 <p class="font-semibold text-on-surface truncate">${word.word} · ${word.meaning}</p>
-                <p class="text-xs text-on-surface-muted">${recording.duration.toFixed(1)}秒 · ${scene.name}</p>
+                <p class="text-xs text-on-surface-muted">示范朗读 · ${scene.name}</p>
             </div>
-            <button onclick="playRecording('${wordId}')" class="w-10 h-10 bg-white rounded-full flex items-center justify-center btn-active shadow-sm">
+            <button onclick="playTTS('${word.word}')" class="w-10 h-10 bg-white rounded-full flex items-center justify-center btn-active shadow-sm">
                 <span class="material-symbols-rounded text-primary text-xl">play_arrow</span>
             </button>
         `;
         previewList.appendChild(item);
         count++;
+    });
+    
+    // 显示用户录音
+    appState.userRecordings.forEach((recording, wordId) => {
+        if (!appState.demoRecordings.has(wordId)) {
+            const scene = Object.values(wordLibrary).find(s => s.words.some(w => w.id === wordId));
+            const word = scene.words.find(w => w.id === wordId);
+            
+            const item = document.createElement('div');
+            item.className = 'flex items-center gap-3 p-3 bg-surface rounded-xl';
+            item.innerHTML = `
+                <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span class="material-symbols-rounded text-primary text-xl">mic</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="font-semibold text-on-surface truncate">${word.word} · ${word.meaning}</p>
+                    <p class="text-xs text-on-surface-muted">我的录音 · ${recording.duration.toFixed(1)}秒</p>
+                </div>
+                <button onclick="playRecording('${wordId}')" class="w-10 h-10 bg-white rounded-full flex items-center justify-center btn-active shadow-sm">
+                    <span class="material-symbols-rounded text-primary text-xl">play_arrow</span>
+                </button>
+            `;
+            previewList.appendChild(item);
+            count++;
+        }
     });
     
     document.getElementById('preview-count').textContent = count;
@@ -483,12 +647,12 @@ function shareToWeChat() {
 
 // 生成分享数据
 function generateShareData() {
-    const count = appState.recordedWords.size;
-    const scene = wordData[appState.currentScene];
+    const count = appState.demoRecordings.size + appState.userRecordings.size;
+    const scene = wordLibrary[appState.currentScene];
     
     return {
-        title: `我为你录了${count}个英语单词`,
-        desc: `场景：${scene.icon} ${scene.name}，快来听听我的声音吧！`,
+        title: `我为你准备了${count}个英语单词`,
+        desc: `场景：${scene.icon} ${scene.name}，快来听听吧！`,
         imgUrl: 'https://raw.githubusercontent.com/jackh23240-dot/voicecare-child/main/assets/share-card.png'
     };
 }
@@ -504,7 +668,6 @@ async function copyShareLink() {
         saveShareHistory();
         closePreviewModal();
     } catch (err) {
-        // 降级方案：选择文本
         const textArea = document.createElement('textarea');
         textArea.value = shareText;
         document.body.appendChild(textArea);
@@ -533,7 +696,7 @@ async function initDB() {
 }
 
 // 保存录音到 IndexedDB
-async function saveRecordingToDB(wordId, audioBlob, duration) {
+async function saveRecordingToDB(wordId, audioBlob, duration, type) {
     try {
         const db = await initDB();
         const transaction = db.transaction([STORE_NAME], 'readwrite');
@@ -544,11 +707,11 @@ async function saveRecordingToDB(wordId, audioBlob, duration) {
             audioBlob: audioBlob,
             duration: duration,
             timestamp: Date.now(),
-            scene: appState.currentScene
+            scene: appState.currentScene,
+            type: type
         });
         
-        // 保存到学习历史
-        saveToHistory(wordId);
+        saveToHistory(wordId, type);
         
     } catch (err) {
         console.error('保存录音失败:', err);
@@ -566,11 +729,18 @@ async function loadRecordings() {
         request.onsuccess = () => {
             const recordings = request.result;
             recordings.forEach(rec => {
-                appState.recordedWords.set(rec.wordId, {
-                    audioBlob: rec.audioBlob,
-                    duration: rec.duration,
-                    timestamp: rec.timestamp
-                });
+                if (rec.type === 'user') {
+                    appState.userRecordings.set(rec.wordId, {
+                        audioBlob: rec.audioBlob,
+                        duration: rec.duration,
+                        timestamp: rec.timestamp
+                    });
+                } else if (rec.type === 'demo') {
+                    appState.demoRecordings.set(rec.wordId, {
+                        duration: rec.duration,
+                        timestamp: rec.timestamp
+                    });
+                }
             });
             renderCards();
             updateSendButton();
@@ -584,11 +754,12 @@ async function loadRecordings() {
 let learningHistory = [];
 
 // 保存到历史
-function saveToHistory(wordId) {
+function saveToHistory(wordId, type) {
     learningHistory.unshift({
         wordId: wordId,
         timestamp: Date.now(),
-        scene: appState.currentScene
+        scene: appState.currentScene,
+        type: type
     });
     localStorage.setItem('homevoice_history', JSON.stringify(learningHistory));
 }
@@ -596,24 +767,19 @@ function saveToHistory(wordId) {
 // 显示统计
 function showStats() {
     const total = learningHistory.length;
-    
-    // 本周统计
     const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
     const weekCount = learningHistory.filter(h => h.timestamp > weekAgo).length;
-    
-    // 连续天数
     const streak = calculateStreak();
     
     document.getElementById('stat-total').textContent = total;
     document.getElementById('stat-week').textContent = weekCount;
     document.getElementById('stat-streak').textContent = streak;
     
-    // 最近记录
     const recentContainer = document.getElementById('stats-recent');
     recentContainer.innerHTML = '';
     
     learningHistory.slice(0, 5).forEach(record => {
-        const scene = wordData[record.scene];
+        const scene = wordLibrary[record.scene];
         const date = new Date(record.timestamp);
         const timeStr = date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
         
@@ -623,7 +789,7 @@ function showStats() {
             <span class="text-xl">${scene.icon}</span>
             <div class="flex-1">
                 <p class="text-sm font-medium text-on-surface">${scene.name}</p>
-                <p class="text-xs text-on-surface-muted">${timeStr}</p>
+                <p class="text-xs text-on-surface-muted">${timeStr} · ${record.type === 'demo' ? '示范' : '录音'}</p>
             </div>
         `;
         recentContainer.appendChild(item);
@@ -635,19 +801,14 @@ function showStats() {
 // 计算连续天数
 function calculateStreak() {
     if (learningHistory.length === 0) return 0;
-    
     let streak = 1;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     
-    let currentDate = new Date(today);
-    
     for (let i = 0; i < learningHistory.length; i++) {
         const recordDate = new Date(learningHistory[i].timestamp);
         recordDate.setHours(0, 0, 0, 0);
-        
         const diffDays = Math.floor((today - recordDate) / (24 * 60 * 60 * 1000));
-        
         if (diffDays === streak - 1) {
             streak++;
         } else if (diffDays > streak) {
@@ -672,7 +833,7 @@ function showHistory() {
 function saveShareHistory() {
     const shareRecord = {
         timestamp: Date.now(),
-        count: appState.recordedWords.size,
+        count: appState.demoRecordings.size + appState.userRecordings.size,
         scene: appState.currentScene
     };
     
@@ -699,7 +860,6 @@ function showToast(message) {
 // 页面可见性变化处理
 document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
-        // 页面隐藏时停止录音
         if (appState.isRecording) {
             stopRecording();
         }
