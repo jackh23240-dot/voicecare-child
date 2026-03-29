@@ -1,7 +1,7 @@
 // HomeVoice English - 子女端应用主逻辑
 // 包含完整的录音、存储、分享功能
 
-// 单词卡片数据 - 10 个场景，每个场景 3 个单词
+// 单词卡片数据 - 5 个场景，每个场景 3 个单词
 const wordData = {
     customs: {
         name: '过海关',
@@ -25,7 +25,7 @@ const wordData = {
         name: '餐厅点餐',
         icon: '🍽️',
         words: [
-            { id: 'r1', word: 'Menu', phonetic: '/ˈmenjuː/', meaning: '菜单', example: 'Can I see the menu?', exampleCn: '能给我看看菜单吗？', aiScript: 'Menu 就是菜单，进餐厅第一件事就是"Can I see the menu"！' },
+            { id: 'r1', word: 'Menu', phonetic: '/ˈmenju/', meaning: '菜单', example: 'Can I see the menu?', exampleCn: '能给我看看菜单吗？', aiScript: 'Menu 就是菜单，进餐厅第一件事就是"Can I see the menu"！' },
             { id: 'r2', word: 'Order', phonetic: '/ˈɔːrdər/', meaning: '点餐', example: 'I\'d like to order now.', exampleCn: '我现在想点餐。', aiScript: 'Order 是点餐，准备好点菜就说"I\'d like to order"！' },
             { id: 'r3', word: 'Delicious', phonetic: '/dɪˈlɪʃəs/', meaning: '美味的', example: 'This is delicious!', exampleCn: '这个很好吃！', aiScript: 'Delicious 是好吃的意思，吃到好吃的菜可以说"This is delicious"！' }
         ]
@@ -120,7 +120,7 @@ function renderCards() {
     scene.words.forEach((word, index) => {
         const isRecorded = appState.recordedWords.has(word.id);
         const card = document.createElement('div');
-        card.className = 'bg-surface-card rounded-2xl p-5 shadow-sm border border-surface card-enter';
+        card.className = 'bg-white rounded-2xl p-5 shadow-sm border border-surface card-enter';
         card.style.animationDelay = `${index * 0.1}s`;
         card.innerHTML = `
             <div class="flex items-start justify-between mb-3">
@@ -128,9 +128,14 @@ function renderCards() {
                     <h3 class="text-2xl font-bold text-on-surface">${word.word}</h3>
                     <p class="text-sm text-on-surface-muted">${word.phonetic}</p>
                 </div>
-                <button onclick="playTTS('${word.word}')" class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center btn-active hover:bg-primary/20">
-                    <span class="material-symbols-filled text-primary text-2xl">play_arrow</span>
-                </button>
+                <div class="flex gap-2">
+                    <button onclick="playDemo('${word.word}')" class="w-10 h-10 bg-secondary/10 rounded-full flex items-center justify-center btn-active hover:bg-secondary/20" title="示范朗读">
+                        <span class="material-symbols-rounded text-secondary text-xl">volume_up</span>
+                    </button>
+                    <button onclick="playTTS('${word.word}')" class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center btn-active hover:bg-primary/20" title="播放发音">
+                        <span class="material-symbols-rounded text-primary text-xl">play_arrow</span>
+                    </button>
+                </div>
             </div>
             <div class="flex items-baseline gap-2 mb-3">
                 <span class="text-lg font-semibold text-on-surface">${word.meaning}</span>
@@ -141,12 +146,12 @@ function renderCards() {
             </div>
             <div class="flex gap-2">
                 <button onclick="openRecordModal('${word.id}')" class="flex-1 h-12 ${isRecorded ? 'bg-primary' : 'bg-primary/10'} text-white rounded-xl font-medium btn-active transition-all flex items-center justify-center gap-2">
-                    <span class="material-symbols-outlined text-lg">${isRecorded ? 'check_circle' : 'mic'}</span>
+                    <span class="material-symbols-rounded text-lg">${isRecorded ? 'check_circle' : 'mic'}</span>
                     <span>${isRecorded ? '已录制' : '录制发音'}</span>
                 </button>
                 ${isRecorded ? `
                     <button onclick="playRecording('${word.id}')" class="w-12 h-12 bg-secondary/10 rounded-xl flex items-center justify-center btn-active hover:bg-secondary/20">
-                        <span class="material-symbols-filled text-secondary text-2xl">play_circle</span>
+                        <span class="material-symbols-rounded text-secondary text-2xl">play_circle</span>
                     </button>
                 ` : ''}
             </div>
@@ -339,12 +344,43 @@ function animateWaveform() {
     draw();
 }
 
-// 播放 TTS
+// 播放 TTS（机器发音）
 function playTTS(text) {
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'en-US';
     utterance.rate = 0.8;
     speechSynthesis.speak(utterance);
+    showToast('播放发音');
+}
+
+// 播放示范朗读（真人发音模拟 - 使用更高质量的 TTS）
+function playDemo(text) {
+    // 先播放提示音
+    const context = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = context.createOscillator();
+    const gainNode = context.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(context.destination);
+    
+    oscillator.frequency.value = 800;
+    oscillator.type = 'sine';
+    gainNode.gain.setValueAtTime(0.1, context.currentTime);
+    
+    oscillator.start(context.currentTime);
+    oscillator.stop(context.currentTime + 0.1);
+    
+    // 然后播放单词
+    setTimeout(() => {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        utterance.rate = 0.7;
+        utterance.pitch = 1.0;
+        utterance.volume = 1.0;
+        speechSynthesis.speak(utterance);
+    }, 150);
+    
+    showToast('示范朗读');
 }
 
 // 播放录音
@@ -371,7 +407,7 @@ function updateSendButton() {
         btn.classList.remove('bg-gray-300');
         btn.classList.add('bg-gradient-to-r', 'from-primary', 'to-primary-dark');
         btn.innerHTML = `
-            <span class="material-symbols-filled text-2xl">send</span>
+            <span class="material-symbols-rounded text-2xl">send</span>
             <span>发送声音包裹 (${count}个)</span>
         `;
     } else {
@@ -379,7 +415,7 @@ function updateSendButton() {
         btn.classList.add('bg-gray-300');
         btn.classList.remove('bg-gradient-to-r', 'from-primary', 'to-primary-dark');
         btn.innerHTML = `
-            <span class="material-symbols-filled text-2xl">send</span>
+            <span class="material-symbols-rounded text-2xl">send</span>
             <span>选择单词后录音</span>
         `;
     }
@@ -399,14 +435,14 @@ function showSendPreview() {
         item.className = 'flex items-center gap-3 p-3 bg-surface rounded-xl';
         item.innerHTML = `
             <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                <span class="material-symbols-filled text-primary text-xl">mic</span>
+                <span class="material-symbols-rounded text-primary text-xl">mic</span>
             </div>
             <div class="flex-1 min-w-0">
                 <p class="font-semibold text-on-surface truncate">${word.word} · ${word.meaning}</p>
                 <p class="text-xs text-on-surface-muted">${recording.duration.toFixed(1)}秒 · ${scene.name}</p>
             </div>
             <button onclick="playRecording('${wordId}')" class="w-10 h-10 bg-white rounded-full flex items-center justify-center btn-active shadow-sm">
-                <span class="material-symbols-filled text-primary text-xl">play_arrow</span>
+                <span class="material-symbols-rounded text-primary text-xl">play_arrow</span>
             </button>
         `;
         previewList.appendChild(item);
